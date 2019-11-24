@@ -1,4 +1,7 @@
 // Тоглоомны бүх газар ашиглагдах глобаль хувьсагчдыг энд зарлая
+// тоглоом дууссан эсэхийг хадгалах төлөвийг хувьсагч
+var isNewGame;
+
 var activePlayer;
 var scores;
 var roundScore;
@@ -9,6 +12,8 @@ var diceDom = document.querySelector(".dice");
 initGame();
 
 function initGame() {
+  // тоглоом эхэллээ гэдэг төлөвт оруулна.
+  isNewGame = true;
   // тоглогчийн ээлжийг хадгалах хувьсагч хадгалах
   activePlayer = 0;
   //тоглогчийн цуглуулсан оноог хадгалах
@@ -40,43 +45,56 @@ function initGame() {
 
 // шоод шидэх эвэнт листенер
 document.querySelector(".btn-roll").addEventListener("click", function() {
-  // 1-6 хүртэл санамсаргүй нэг тоо гаргаж авна.
-  var diceNumber = Math.floor(Math.random() * 6) + 1;
-  // Шооны зургийг вэб дээр гаргаж ирнэ
-  diceDom.style.display = "Block";
-  // буусан санамсаргүй тоонд харгалзах зургийг вэбд гаргаж үзүүлнэ.
-  diceDom.src = "dice-" + diceNumber + ".png";
-  // буусан тоо нь 1-ээс ялгаатай бол идэвхтэй тоглогчийн ээлжийг оноог нэмэгдүүлнэ
-  if (diceNumber !== 1) {
-    // 1-с ялгаатай тоо буулаа. буусан тоог тоглогчид нэмж өгнө
-    roundScore = roundScore + diceNumber;
-    document.getElementById("current-" + activePlayer).textContent = roundScore;
+  if (isNewGame) {
+    // 1-6 хүртэл санамсаргүй нэг тоо гаргаж авна.
+    var diceNumber = Math.floor(Math.random() * 6) + 1;
+    // Шооны зургийг вэб дээр гаргаж ирнэ
+    diceDom.style.display = "Block";
+    // буусан санамсаргүй тоонд харгалзах зургийг вэбд гаргаж үзүүлнэ.
+    diceDom.src = "dice-" + diceNumber + ".png";
+    // буусан тоо нь 1-ээс ялгаатай бол идэвхтэй тоглогчийн ээлжийг оноог нэмэгдүүлнэ
+    if (diceNumber !== 1) {
+      // 1-с ялгаатай тоо буулаа. буусан тоог тоглогчид нэмж өгнө
+      roundScore = roundScore + diceNumber;
+      document.getElementById(
+        "current-" + activePlayer
+      ).textContent = roundScore;
+    } else {
+      // 1 буусан тул тоглогчийн ээлжийг энэ хэсэгт сольж өгнө
+      switchToNextPlayer();
+    }
   } else {
-    // 1 буусан тул тоглогчийн ээлжийг энэ хэсэгт сольж өгнө
-    switchToNextPlayer();
+    alert(" Тоглоом дууссан байна. New Game товчийг дарж эхэлэн үү");
   }
 });
 // hold tovchnii event listner
 document.querySelector(".btn-hold").addEventListener("click", function() {
-  // уг тоглогчийн цуглуулсан ээлжийн оноог глобаль оноо дээр нь нэмж өгнө.
-  scores[activePlayer] = scores[activePlayer] + roundScore;
+  if (isNewGame) {
+    // уг тоглогчийн цуглуулсан ээлжийн оноог глобаль оноо дээр нь нэмж өгнө.
+    scores[activePlayer] = scores[activePlayer] + roundScore;
 
-  // дэлгэц дээр оноог өөрчилнө
-  document.getElementById("score-" + activePlayer).textContent =
-    scores[activePlayer];
-  // Уг тоглогч хожсон эсэхийг (оноо нь 100-с их эсэх) шалгах
-  if (scores[activePlayer] >= 10) {
-    // ялагч гэсэн текстийг нэрний оронд гарганаа.
-    document.getElementById("name-" + activePlayer).textContent = "WINNER!!!";
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.remove("active");
+    // дэлгэц дээр оноог өөрчилнө
+    document.getElementById("score-" + activePlayer).textContent =
+      scores[activePlayer];
+    // Уг тоглогч хожсон эсэхийг (оноо нь 100-с их эсэх) шалгах
+    if (scores[activePlayer] >= 10) {
+      // Тоглоомыг дууссан төлөвт оруулна.
+      isNewGame = false;
+
+      // ялагч гэсэн текстийг нэрний оронд гарганаа.
+      document.getElementById("name-" + activePlayer).textContent = "WINNER!!!";
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.add("winner");
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.remove("active");
+    } else {
+      // тоглогчийн ээлжийг солино
+      switchToNextPlayer();
+    }
   } else {
-    // тоглогчийн ээлжийг солино
-    switchToNextPlayer();
+    alert(" Тоглоом дууссан байна. New Game товчийг дарж эхэлэн үү");
   }
 });
 // Энэ функц нь тоглох ээлжийг дараачийн тоглогч руу шилжүүлдэг.
