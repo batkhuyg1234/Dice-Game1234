@@ -5,9 +5,9 @@ var isNewGame;
 var activePlayer;
 var scores;
 var roundScore;
-
+89885548;
 // Шооны зургийг үзүүлэх элементийг DOM -оос хайж олоод энд хадгалья
-var diceDom = document.querySelector(".dice");
+var diceDom = document.querySelector(".dice1");
 // тоглоомыг эхлүүлнэ
 initGame();
 
